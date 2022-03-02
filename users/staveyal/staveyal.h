@@ -21,16 +21,31 @@
 #define _________________FUNC_LEFT_________________ KC_F1, KC_F2, KC_F3, KC_F4, KC_F5
 #define _________________FUNC_RIGHT________________ KC_F6, KC_F7, KC_F8, KC_F9, KC_F10
 
+
 #define ___________________BLANK___________________ _______, _______, _______, _______, _______
 
-#define __THUMB_L__ KC_TAB, KC_BSPC
-#define __THUMB_R__ KC_SPC, KC_ENT
+#define __HOME_ROW_MODS_LEFT__(K1, K2, K3, K4, K5) CTL_T(K1), OPT_T(K2), SFT_T(K3), CMD_T(K4), K5
+#define __HOME_ROW_MODS_RIGHT__(K1, K2, K3, K4, K5, K6) K1, CMD_T(K2), SFT_T(K3), OPT_T(K4), CTL_T(K5), K6
+
+#define ______________QWERTY_L2_MODS_______________ __HOME_ROW_MODS_LEFT__(KC_A, KC_S, KC_D, KC_F, KC_G)
+#define ______________QWERTY_R2_MODS_______________ __HOME_ROW_MODS_RIGHT__(KC_H, KC_J, KC_K, KC_L, KC_SCLN, KC_QUOT)
+
+#define __THUMB_L__ KC_TAB, LT(_LOWER, KC_SPC)
+#define __THUMB_R__ LT(_RAISE, KC_BSPC), KC_ENT
 
 #define _________________NUMPAD_1__________________ _______, KC_7, KC_8, KC_9, _______,
 #define _________________NUMPAD_2__________________ _______, KC_4, KC_5, KC_6, _______,
 #define _________________NUMPAD_3__________________ _______, KC_1, KC_2, KC_3, _______,
 
-enum layers {
-    _QWERTY = 0,
-    _COLEMAK_DH,
+
+
+
+enum userspace_layers {
+    _QWERTY  = 0,
+    _COLEMAK,
+    _DVORAK,
+    _MEDIA,
+    _LOWER,
+    _RAISE,
+    _ADJUST,
 };

@@ -14,13 +14,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
+#include "staveyal.h"
 
-enum layers {
-    _QWERTY = 0,
-    _LOWER,
-    _RAISE,
-    _ADJUST
-};
+/*
+ * The `LAYOUT_kyria_base` macro is a template to allow the use of identical
+ * modifiers for the default layouts (eg QWERTY, Colemak, Dvorak, etc), so
+ * that there is no need to set them up for each layout, and modify all of
+ * them if I want to change them.  This helps to keep consistency and ease
+ * of use. K## is a placeholder to pass through the individual keycodes
+ */
+
+// clang-format off
+#define LAYOUT_wrapper(...)            LAYOUT(__VA_ARGS__)
+#define LAYOUT_kyria_base( \
+    K01, K02, K03, K04, K05, K06, K07, K08, K09, K0A, \
+    K11, K12, K13, K14, K15, K16, K17, K18, K19, K1A, K1B, \
+    K21, K22, K23, K24, K25, K26, K27, K28, K29, K2A  \
+  ) \
+  LAYOUT_wrapper( \
+      LT(_RAISE, KC_ESC),  K01,     K02,     K03,     K04,     K05,                                             K06,     K07,     K08,     K09,     K0A,     KC_MINS, \
+    CTL_T(KC_ESC), K11, K12,  K13,     K14,     K15,                                             K16,     K17,     K18,     K19,     K1A, RALT_T(K1B), \
+    KC_LSFT, K21, K22,  K23,     K24,     K25,  KC_LSFT, MEH(KC_MINS),   KC_LSFT, KC_CAPS, K26,     K27,     K28,     K29, K2A, KC_RSFT, \
+                                 KC_MUTE, KC_LOPT, __THUMB_L__,  KC_ENT,     KC_LGUI, __THUMB_R__, UC(0x03A8), UC(0x2E2E) \
+    )
+/* Re-pass though to allow templates to be used */
+#define LAYOUT_kyria_base_wrapper(...)       LAYOUT_kyria_base(__VA_ARGS__)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /*
@@ -37,12 +55,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                        |      |      | Alt  | Lower| Raise|  | Lower| Raise|      |      |      |
  *                        `----------------------------------'  `----------------------------------'
  */
-    [_QWERTY] = LAYOUT(
-      LT(_RAISE, KC_ESC),       KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,                                         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_PIPE,
-      MT(MOD_LCTL, KC_BSPC),   KC_A,   KC_S,   KC_D,   KC_F,   KC_G,                                         KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
-      KC_LSFT,                 KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,   KC_LSFT,   KC_LSFT, KC_LSFT, KC_LSFT, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_MINS,
-              KC_LGUI, KC_DEL, MT(MOD_LALT, KC_ENT), LT(_LOWER, KC_SPC), LT(_RAISE, KC_ESC), LT(_LOWER, KC_ENT), LT(_RAISE, KC_SPC), KC_TAB,  KC_BSPC, KC_RALT
+    [_QWERTY] = LAYOUT_kyria_base_wrapper(
+        _________________QWERTY_L1_________________, _________________QWERTY_R1_________________,
+        ______________QWERTY_L2_MODS_______________, ______________QWERTY_R2_MODS_______________,
+        _________________QWERTY_L3_________________, _________________QWERTY_R3_________________
     ),
+
+    // [_QWERTY] = LAYOUT(
+    //   LT(_RAISE, KC_ESC),       KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,                                         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_PIPE,
+    //   MT(MOD_LCTL, KC_BSPC),   ,                                         ______________QWERTY_R2_MODS_______________,
+    //   KC_LSFT,                 KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,   KC_LSFT,   KC_LSFT, KC_LSFT, KC_LSFT, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_MINS,
+    //           KC_LGUI, KC_DEL, MT(MOD_LALT, KC_ENT), LT(_LOWER, KC_SPC), LT(_RAISE, KC_ESC), LT(_LOWER, KC_ENT), LT(_RAISE, KC_SPC), KC_TAB,  KC_BSPC, KC_RALT
+    // ),
 /*
  * Lower Layer: Symbols
  *
@@ -57,11 +81,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                        |      |      |      |      |      |  |      |      |      |      |      |
  *                        `----------------------------------'  `----------------------------------'
  */
-    [_LOWER] = LAYOUT(
-      _______, KC_EXLM, KC_AT,   KC_LCBR, KC_RCBR, KC_PIPE,                                     _______, _______, _______, _______, _______, KC_BSLS,
-      _______, KC_HASH, KC_DLR,  KC_LPRN, KC_RPRN, KC_GRV,                                      KC_PLUS, KC_MINS, KC_SLSH, KC_ASTR, KC_PERC, KC_QUOT,
-      _______, KC_PERC, KC_CIRC, KC_LBRC, KC_RBRC, KC_TILD, _______, _______, _______, _______, KC_AMPR, KC_EQL,  KC_COMM, KC_DOT,  KC_SLSH, KC_MINS,
-                                 _______, _______, _______, KC_SCLN, KC_EQL,  KC_EQL,  KC_SCLN, _______, _______, _______
+    [_LOWER] = LAYOUT_kyria_base_wrapper(
+      KC_EXLM, KC_AT,   KC_LCBR, KC_RCBR, KC_PIPE,                                     _______, _______, _______, _______, _______,
+      __HOME_ROW_MODS_LEFT__(KC_HASH, KC_DLR,  KC_LPRN, KC_RPRN, KC_GRV),              __HOME_ROW_MODS_RIGHT__(KC_PLUS, KC_MINS, KC_SLSH, KC_ASTR, KC_PERC, KC_QUOT),
+      KC_PERC, KC_CIRC, KC_LBRC, KC_RBRC, KC_TILD,                                     KC_AMPR, KC_EQL,  KC_COMM, KC_DOT,  KC_SLSH
     ),
 /*
  * Raise Layer: Number keys, media, navigation
@@ -79,7 +102,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
     [_RAISE] = LAYOUT(
       _______, KC_1, 	  KC_2,    KC_3,    KC_4,    KC_5,                                        KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    _______,
-      _______, _______, KC_MPRV, KC_MPLY, KC_MNXT, KC_VOLU,                                     KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, _______, _______,
+      _______, _______, OPT_T(KC_MPRV), SFT_T(KC_MPLY), CMD_T(KC_MNXT), KC_VOLU,                                     KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, _______, _______,
       _______, _______, _______, _______, KC_MUTE, KC_VOLD, _______, _______, _______, _______, KC_MS_L, KC_MS_D, KC_MS_U, KC_MS_R, _______, _______,
                                  _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
     ),
